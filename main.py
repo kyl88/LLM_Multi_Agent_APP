@@ -1,65 +1,32 @@
-from langflow.load import run_flow_from_json
-# .env
-from dotenv import load_dotenv
-import requests
-from typing import Optional
-import os
+import streamlit as st
 
-load_dotenv()
+st.title("Personal Fitness Tool")
 
-BASE_API_URL = "https://api.aiv2.dev/v1/ask"
-LANGFLOW_ID = "AskAIV2"
-APPLICATION_TOKEN = os.getenv("LANGFLOW_TOKEN") 
+@st.fragment()
+def personal_data_form():
 
-def ask_aiv2(question, profile):
- TWEAKS = {
-   "TextInput-nnXnX": {
-      "input_value": question
-  },
-  
-  "TextInput-03p3z": {
-      "input_value": profile  
-  },
-  
-}
+  with st.form("personal_data_form"):
+        st.header("Personal Data")
 
-result = run_flow_from_json(flow = "AskAIV2.json",input_value="message",fallback_to_env_vars=False, tweaks=TWEAKS)
+        name = st.text_input("Name")
+        age = st.number_input("Age", min_value=0,max_value=120,step=1)
+        weight = st.number_input("Weight (kg)", min_value=0.0, max_value=300.0, step=0.1)
+        height = st.number_input("Height (cm)", min_value=0.0, max_value=300.0, step=0.1)
+        gender = st.radio("Gender", ["Male", "Female", "Other"])
+        activities = ('Sedentary', 'Lightly Active', 'Moderately Active', 'Very Active', 'Extra Active')
+        activity_level = st.selectbox("Activity Level", activities)
 
-def get_macros(goals, profile):
- TWEAKS = {
-   "TextInput-nnXnX": {
-      "input_value": goals
-  },
-  
-   "TextInput-03p3z": {
-       "input_value": profile  
-    },
-  }
- 
- return run_flow_from_json("", tweaks=TWEAKS)
- 
-def run_flow_from_json(message : str,
-                       output_type: str = "chat",
-                       input_type: str = "chat",
-                       tweaks: Optional[dict] = None,
-                       application_token: Optional[str] = None)-> dict:
-                       api_url = f"{BASE_API_URL}/{output_type}"
-                      
-                       payload = {
-                          "input_value": message,
-                          "output_type": output_type,
-                          "input_type": input_type,  
+        personal_data_submit = st.form_submit_button("Submit")
+        if personal_data_submit:
+            if all ([name, age, weight, height, gender, activity_level]):
+                with st.spinner("Processing..."):
+                    st.success("Personal data submitted successfully!")
+            else:
+                st.warning("Please fill in all the fields.")
 
-                       }
-                       headers = None
+def forms():
+    personal_data_form()
 
-                       if tweaks:
-                           payload["tweaks"] = tweaks
 
-                       if application_token:
-                           headers = {"Authorization": f"Bearer {application_token}"}
-                       
-                       response = requests.request("POST", api_url, headers=headers, data=payload)
-                       return response.json() 
-result = get_macros("name: Kyle, age: 37","weight: 71kg, 1.72cm","muscle gain")
-print(result)
+if __name__ == "__main__":
+    forms()   
