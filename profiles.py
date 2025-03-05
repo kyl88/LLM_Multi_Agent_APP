@@ -1,4 +1,4 @@
-from .db import personal_data_collection, notes_collection
+from db import personal_data_collection, notes_collection
 
 def get_values(_id):
     return {
@@ -23,8 +23,8 @@ def get_values(_id):
 
 def create_profile(_id):
     profile_values = get_values(_id)
-    inserted_id = personal_data_collection.insert_one(profile_views)
-    return inserted_id, profile_values
+    result = personal_data_collection.insert_one(profile_values)
+    return result.inserted_id, result
 
 def get_profile(_id):
     return personal_data_collection.find_one({"_id":{"$eq":_id}})

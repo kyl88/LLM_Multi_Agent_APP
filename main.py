@@ -1,5 +1,5 @@
 import streamlit as st
-from profiles import create_profile,get_notes,get_profile
+from profiles import create_profile,get_notes,get_profile,update_personal_info
 
 st.title("Personal Fitness Tool")
 
@@ -26,6 +26,7 @@ def personal_data_form():
         if personal_data_submit:
             if all ([name, age, weight, height, gender, activity_level]):
                 with st.spinner("Processing..."):
+                    update_personal_info(profile,"general",name=name,age=age,weight=weight,height=height,gender=genders[gender],activity_level=activities[activity_level])
                     st.success("Personal data submitted successfully!")
             else:
                 st.warning("Please fill in all the fields.")
