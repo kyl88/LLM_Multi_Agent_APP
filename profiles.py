@@ -20,3 +20,15 @@ def get_values(_id):
     },
 
 }
+
+def create_profile(_id):
+    profile_values = get_values(_id)
+    inserted_id = personal_data_collection.insert_one(profile_views)
+    return inserted_id, profile_values
+
+def get_profile(_id):
+    return personal_data_collection.find_one({"_id":{"$eq":_id}})
+
+def get_notes(_id):
+    return list(notes_collection.find({"user_id": {"$eq: _id"}}))
+
