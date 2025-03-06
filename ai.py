@@ -1,3 +1,4 @@
+from textwrap import indent
 from langflow.load import run_flow_from_json
 # .env
 from dotenv import load_dotenv
@@ -18,21 +19,22 @@ def ask_aiv2(question, profile):
   },
   
   "TextInput-03p3z": {
-      "input_value": profile  
+      "input_value":dict_to_string(profile)  
   },
   
 }
 
 result = run_flow_from_json(flow = "AskAIV2.json",input_value="message",fallback_to_env_vars=False, tweaks=TWEAKS)
 
+   
 def get_macros(goals, profile):
  TWEAKS = {
    "TextInput-nnXnX": {
-      "input_value": goals
+      "input_value": ",".join(goals) 
   },
   
    "TextInput-03p3z": {
-       "input_value": profile  
+       "input_value": dict_to_string(profile) 
     },
   }
  

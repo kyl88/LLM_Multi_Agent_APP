@@ -1,4 +1,4 @@
-from ai import get_macros
+from ai import ask_aiv2, get_macros
 import streamlit as st
 from profiles import create_profile,get_notes,get_profile,update_personal_info
 
@@ -73,6 +73,32 @@ def macros():
             with st.spinner("Processing..."):
                 st.session_state.profile = update_personal_info(profile,"nutrition",calories=calories,protein=protein,fat=fat,carbs=carbs)    
                 st.success("Information saved")
+@st.fragment()
+def notes():
+    st.subheader("Notes")
+    for i, note in enumerate(st.session_state.notes):
+        cols = st.columns([5,1])
+        with cols[0]:
+            st.write(note["text"])
+        with cols[1]:
+            if st.button("Delete"):
+                delete_note(note.get("_id"))
+                st.session_state.notes.pop(i)
+                st.rerun()
+    new_note = st.text_input("Add a new note: ")
+    if st.button("Add Note"):
+        if new_note:
+            note = add_note(new_note, st.session_state.profile_id)
+            st.session_state.notes.append(note)
+            st.rerun()
+@st.fragment()
+def ask_ai_func():
+    st.subheader("Ask AI")
+    user_question = st.text_input("Ask a question:")
+    if st.button("Ask AI"):  
+        with st.spinner("Processing..."):
+            result = ask_aiv2(st.session_state.profile,user_question)
+            st.write(result)          
 def forms():
     if "profile" not in st.session_state:
         profile_id =1
@@ -88,6 +114,9 @@ def forms():
 
     personal_data_form()
     goals_form()
+    macros()
+    notes()
+    ask_ai_func()
 
 
 if __name__ == "__main__":
