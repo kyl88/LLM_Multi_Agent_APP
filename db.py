@@ -13,7 +13,8 @@ TOKEN = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
 @st.cache_resource
 def get_db():
     client = DataAPIClient(TOKEN)
-    db=client.get_database_by_api_endpoint(ENDPOINT)
+    
+    db=client.get_database_by_api_endpoint(str(ENDPOINT))
     return db
 
 db = get_db()
